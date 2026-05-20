@@ -1,0 +1,27 @@
+name: Midnight Auto-Clockout
+
+on:
+  schedule:
+    - cron: '0 19 * * *' # Runs at 19:00 UTC (Midnight in PKT)
+  workflow_dispatch: # This adds a button so you can test it manually anytime!
+
+jobs:
+  sweep-database:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Install Database Tools
+        run: pip install psycopg2-binary
+
+      - name: Run Midnight Sweep
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: python auto_clockout.py
